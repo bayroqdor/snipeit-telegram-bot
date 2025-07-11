@@ -26,7 +26,7 @@
 - Telegram Bot Token
 
 ### 📁 Структура проекта
-
+```text
 snipeit_bot/
 ├── handlers/ # Основная логика бота
 │ ├── assets.py
@@ -37,6 +37,7 @@ snipeit_bot/
 ├── snipe_api.py # Обращения к API Snipe-IT
 ├── config.py # Конфигурация: токены и URL
 └── main.py # Главный файл запуска бота
+```
 
 ### ⚙️ Установка и запуск
 
@@ -81,4 +82,4 @@ python main.py
 - apscheduler
 
 ### 📄 Лицензия
-GNU 
+GNU v3.0
