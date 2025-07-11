@@ -4,11 +4,9 @@ from handlers import assets, users, common
 import re
 import pytz
 
-
 def main():
     app = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
 
-    # === Conversation Handlerlar ===
     asset_add_handler = ConversationHandler(
         entry_points=[CallbackQueryHandler(assets.add_asset_start, pattern='^assets_add_start$')],
         states={
@@ -55,7 +53,6 @@ def main():
         fallbacks=[CommandHandler('cancel', common.cancel), CallbackQueryHandler(users.users_menu, pattern='^users_menu$')]
     )
 
-    # === Handlerlar qo‘shiladi ===
     app.add_handler(CommandHandler("start", common.start))
     app.add_handler(asset_add_handler)
     app.add_handler(asset_search_handler)
@@ -63,33 +60,25 @@ def main():
     app.add_handler(user_add_handler)
     app.add_handler(user_search_handler)
 
-    # Matnli menyu
     app.add_handler(MessageHandler(filters.Regex(r'^🗄 Aktivlar \(Assets\)$'), assets.assets_menu))
     app.add_handler(MessageHandler(filters.Regex(r'^👥 Foydalanuvchilar \(Users\)$'), users.users_menu))
 
-    # Inline tugmalar
     app.add_handler(CallbackQueryHandler(assets.assets_menu, pattern='^assets_menu$'))
     app.add_handler(CallbackQueryHandler(users.users_menu, pattern='^users_menu$'))
     app.add_handler(CallbackQueryHandler(assets.asset_list_callback, pattern='^assets_list_'))
     app.add_handler(CallbackQueryHandler(users.user_list_callback, pattern='^users_list_'))
     app.add_handler(CallbackQueryHandler(assets.assign_asset_confirm, pattern='^assign_confirm_'))
 
-    # /view_asset_123 yoki /view_user_45 kabi buyruqlar uchun ASINXRON handlerlar
-    
-    # "def" o'rniga "async def" dan foydalanamiz
     async def asset_redirect(update, context):
         match = re.search(r'/view_asset_(\d+)', update.message.text)
         if match:
             context.args = [match.group(1)]
-            # Asinxron funksiyani await qilamiz
             await assets.view_asset_command(update, context)
 
-    # "def" o'rniga "async def" dan foydalanamiz
     async def user_redirect(update, context):
         match = re.search(r'/view_user_(\d+)', update.message.text)
         if match:
             context.args = [match.group(1)]
-            # Asinxron funksiyani await qilamiz
             await users.view_user_command(update, context)
 
     app.add_handler(MessageHandler(filters.Regex(r'^/view_asset_'), asset_redirect))
